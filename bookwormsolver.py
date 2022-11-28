@@ -15,9 +15,18 @@ def mapCompare(listmap, wordmap):
 		for letter in alpha:
 			if(listmap[cword][letter] > wordmap[letter]):
 				valid = False
-		if valid == True:
+				break
+		if (valid == True and qucheck(cword) == False):
 			outList.append(cword)
 	return outList
+
+def qucheck(word):
+	index = word.find('q')
+	if index == -1:
+		return False
+	if word[index+1] == 'u':
+		return False
+	return True
 
 if __name__=='__main__':
 	lenmap = {number+1:{} for number in range(16)}
