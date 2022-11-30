@@ -1,4 +1,14 @@
 import json
+import pygetwindow
+from PIL import ImageGrab
+from PIL import ImageFilter
+from PIL import Image
+import pytesseract
+import numpy
+import cv2
+import time
+
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 base = "dictionaryoutput\word"
 alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
@@ -28,6 +38,32 @@ def qucheck(word):
 		return False
 	return True
 
+def editImage(old):
+	fn = lambda x : 255 if x > 10 else 0
+	new = old.resize((1000,1000))
+	new = new.convert('L').point(fn, mode='1')
+	return new
+
+def getCurrentLetters():
+	curstr = ''
+	sneed = pygetwindow.getWindowsWithTitle('Bookworm Adventures Deluxe 1.0')[0]
+	for i in range(0,200,50):
+		for j in range(0,200,50):
+			left = sneed.left+305+i
+			right = sneed.left+355+i
+			top = sneed.top+335+j
+			bottom = sneed.top+385+j
+			letter = ImageGrab.grab(bbox=(left,top,right,bottom))
+			letter = editImage(letter)
+			cfg = r'-l eng --oem 3 --psm 10 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZ" '
+			cur = pytesseract.image_to_string(letter, lang='eng', config=cfg)
+			if len(cur) > 0:
+				if cur[0] == 'Q':
+					curstr += 'QU'
+				else:
+					curstr += cur[0]
+	return curstr.lower()
+
 if __name__=='__main__':
 	lenmap = {number+1:{} for number in range(16)}
 	for i in range(16):
@@ -35,13 +71,13 @@ if __name__=='__main__':
 		f = open(file,'r')
 		lenmap[i+1] = json.load(f)
 		f.close()
-	userinput = ""
-	while(userinput != '-1'):
-		print("Input: ", end='')
-		userinput = input()
+	while(1):
+		userinput = getCurrentLetters()
+		print("Assumed Input: ", userinput)
 		userMap = countl(userinput)
 		for i in range(16,0,-1):
 			curList = mapCompare(lenmap[i],userMap)
 			if len(curList) > 0:
 				print(curList)
 				break
+		time.sleep(5)
