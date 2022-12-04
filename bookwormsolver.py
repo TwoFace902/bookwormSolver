@@ -80,4 +80,4 @@ if __name__=='__main__':
 			if len(curList) > 0:
 				print(curList)
 				break
-		time.sleep(5)
+		time.sleep(2)

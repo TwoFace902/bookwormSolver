@@ -2,7 +2,7 @@ from PIL.Image import Resampling
 from pathlib import Path
 import tensorflow as tf
 import keras
-from keras.preprocessing import image
+import keras.utils as image
 from keras import layers
 import random
 
@@ -12,7 +12,7 @@ def loadImage(filename):
 	return image.img_to_array(img) == 255
 
 def pilImageToTensor(image):
-	return tf.reshape(tf.constant(img.resize((100,100), resample=Resampling.NEAREST).getData()), (100,100,3))[:,:,0:1] == 255
+	return tf.reshape(tf.constant(image.resize((100,100), resample=Resampling.NEAREST).getdata()), (100,100,1))[:,:,0:1] == 255
 
 def ltrToNum(c):
 	return ord(c[0]) - ord('A')

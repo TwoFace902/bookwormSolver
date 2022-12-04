@@ -1,0 +1,2 @@
+model_checkpoint_path: "gputraining"
+all_model_checkpoint_paths: "gputraining"
