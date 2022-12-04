@@ -31,7 +31,7 @@ def mapCompare(listmap, wordmap):
 
 def qucheck(word):
 	index = word.find('q')
-	if index == -1 or index == len(word)-1:
+	if (index == -1 and word.find('u') != -1) or index == len(word)-1:
 		return False
 	if word[index+1] == 'u':
 		return False
