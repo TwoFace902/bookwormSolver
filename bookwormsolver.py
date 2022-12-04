@@ -3,12 +3,11 @@ import pygetwindow
 from PIL import ImageGrab
 from PIL import ImageFilter
 from PIL import Image
-import pytesseract
 import numpy
 import cv2
 import time
+import imgModel
 
-pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 base = "dictionaryoutput\word"
 alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
@@ -44,7 +43,7 @@ def editImage(old):
 	new = new.convert('L').point(fn, mode='1')
 	return new
 
-def getCurrentLetters():
+def getCurrentLetters(letterModel):
 	curstr = ''
 	sneed = pygetwindow.getWindowsWithTitle('Bookworm Adventures Deluxe 1.0')[0]
 	for i in range(0,200,50):
@@ -55,16 +54,17 @@ def getCurrentLetters():
 			bottom = sneed.top+385+j
 			letter = ImageGrab.grab(bbox=(left,top,right,bottom))
 			letter = editImage(letter)
-			cfg = r'-l eng --oem 3 --psm 10 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZ" '
-			cur = pytesseract.image_to_string(letter, lang='eng', config=cfg)
-			if len(cur) > 0:
-				if cur[0] == 'Q':
-					curstr += 'QU'
-				else:
-					curstr += cur[0]
+			cur = imgModel.modelResultToLetter(letterModel(imgModel.pilImageToTensor(letter)))
+			if cur[0] == 'Q':
+				curstr += 'QU'
+			else:
+				curstr += cur[0]
 	return curstr.lower()
 
 if __name__=='__main__':
+	letterModel = imgModel.buildModel()
+	letterModel.load_weights("weights/gputraining")
+
 	lenmap = {number+1:{} for number in range(16)}
 	for i in range(16):
 		file = base+str(i+1)+".json"
@@ -72,7 +72,7 @@ if __name__=='__main__':
 		lenmap[i+1] = json.load(f)
 		f.close()
 	while(1):
-		userinput = getCurrentLetters()
+		userinput = getCurrentLetters(letterModel)
 		print("Assumed Input: ", userinput)
 		userMap = countl(userinput)
 		for i in range(16,0,-1):
