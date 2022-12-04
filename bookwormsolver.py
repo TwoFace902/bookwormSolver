@@ -30,10 +30,14 @@ def mapCompare(listmap, wordmap):
 	return outList
 
 def qucheck(word):
-	index = word.find('q')
-	if (index == -1 and word.find('u') != -1) or index == len(word)-1:
+	qindex = word.find('q')
+	uindex = word.find('u')
+	if qindex == -1 and uindex != -1:
+		return True
+	if qindex == -1 or qindex == len(word)-1:
 		return False
-	if word[index+1] == 'u':
+	
+	if word[qindex+1] == 'u':
 		return False
 	return True
 
@@ -80,4 +84,4 @@ if __name__=='__main__':
 			if len(curList) > 0:
 				print(curList)
 				break
-		time.sleep(2)
+		time.sleep(3)
