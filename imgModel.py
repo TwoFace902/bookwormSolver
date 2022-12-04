@@ -12,7 +12,7 @@ def loadImage(filename):
 	return image.img_to_array(img) == 255
 
 def pilImageToTensor(image):
-	return tf.reshape(tf.constant(image.resize((100,100), resample=Resampling.NEAREST).getdata()), (100,100,1))[:,:,0:1] == 255
+	return tf.reshape(tf.constant(image.resize((100,100), resample=Resampling.NEAREST).getdata()), (1,100,100,1)) == 255
 
 def ltrToNum(c):
 	return ord(c[0]) - ord('A')
@@ -51,7 +51,7 @@ def buildModel():
 	return model
 
 def modelResultToLetter(res):
-	return chr(tf.argmax(res) + ord('A'))
+	return chr(tf.argmax(res, axis=1)[0] + ord('A'))
 
 
 if __name__ == "__main__":
