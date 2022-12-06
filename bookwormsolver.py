@@ -8,6 +8,7 @@ import cv2
 import time
 import imgModel
 
+quflag = False
 base = "dictionaryoutput\word"
 alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
@@ -32,14 +33,12 @@ def mapCompare(listmap, wordmap):
 def qucheck(word):
 	qindex = word.find('q')
 	uindex = word.find('u')
-	if qindex == -1 and uindex != -1:
-		return True
-	if qindex == -1 or qindex == len(word)-1:
-		return False
-	
-	if word[qindex+1] == 'u':
-		return False
-	return True
+	if quflag == True:
+		if qindex == -1 and uindex != -1:
+			return True
+		if word[qindex+1] == 'u':
+			return False
+	return False
 
 def editImage(old):
 	fn = lambda x : 255 if x > 10 else 0
@@ -48,6 +47,7 @@ def editImage(old):
 	return new
 
 def getCurrentLetters(letterModel):
+	quflag = False
 	curstr = ''
 	sneed = pygetwindow.getWindowsWithTitle('Bookworm Adventures Deluxe 1.0')[0]
 	for i in range(0,200,50):
@@ -60,6 +60,7 @@ def getCurrentLetters(letterModel):
 			letter = editImage(letter)
 			cur = imgModel.modelResultToLetter(letterModel(imgModel.pilImageToTensor(letter)))
 			if cur[0] == 'Q':
+				quflag = True
 				curstr += 'QU'
 			else:
 				curstr += cur[0]
@@ -84,4 +85,4 @@ if __name__=='__main__':
 			if len(curList) > 0:
 				print(curList)
 				break
-		time.sleep(3)
+		time.sleep(2)
