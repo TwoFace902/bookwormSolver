@@ -8,6 +8,7 @@ import cv2
 import time
 import imgModel
 
+global quflag
 quflag = False
 base = "dictionaryoutput\word"
 alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
@@ -31,13 +32,14 @@ def mapCompare(listmap, wordmap):
 	return outList
 
 def qucheck(word):
+	global quflag
 	qindex = word.find('q')
 	uindex = word.find('u')
 	if quflag == True:
 		if qindex == -1 and uindex != -1:
 			return True
-		if word[qindex+1] == 'u':
-			return False
+		if word[qindex+1] != 'u':
+			return True
 	return False
 
 def editImage(old):
@@ -47,7 +49,7 @@ def editImage(old):
 	return new
 
 def getCurrentLetters(letterModel):
-	quflag = False
+	global quflag
 	curstr = ''
 	sneed = pygetwindow.getWindowsWithTitle('Bookworm Adventures Deluxe 1.0')[0]
 	for i in range(0,200,50):
@@ -77,7 +79,9 @@ if __name__=='__main__':
 		lenmap[i+1] = json.load(f)
 		f.close()
 	while(1):
+		quflag = False
 		userinput = getCurrentLetters(letterModel)
+		userinput = 'nmvmquaoeququazsrey'
 		print("Assumed Input: ", userinput)
 		userMap = countl(userinput)
 		for i in range(16,0,-1):
