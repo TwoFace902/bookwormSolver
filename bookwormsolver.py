@@ -81,7 +81,6 @@ if __name__=='__main__':
 	while(1):
 		quflag = False
 		userinput = getCurrentLetters(letterModel)
-		userinput = 'nmvmquaoeququazsrey'
 		print("Assumed Input: ", userinput)
 		userMap = countl(userinput)
 		for i in range(16,0,-1):
